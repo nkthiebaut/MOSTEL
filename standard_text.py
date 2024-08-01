@@ -21,7 +21,8 @@ class Std_Text(object):
             return int((self.height - 4)**2 / font_height)
 
     def draw_text(self, text):
-        assert len(text) != 0
+        if len(text) == 0:
+            text = "placeholder"
 
         char_x = self.border_width
         bg = Image.new("RGB", (self.max_width, self.height), color=(127, 127, 127))
