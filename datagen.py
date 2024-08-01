@@ -101,7 +101,12 @@ class custom_dataset(Dataset):
                         lines = f.readlines()
                     self.real_name_list += [os.path.join(tmp_data_dir, '{}', line.strip().split()[0]) for line in lines]
                     for line in lines:
-                        tmp_key, tmp_val = line.strip().split()
+                        try:
+                            tmp_key, tmp_val = line.strip().split()
+                        except ValueError:
+                            all_items = line.strip().split()
+                            tmp_key = all_items[0]
+                            tmp_val = ' '.join(all_items[1:])
                         self.real_i_t_list[tmp_dataset_name + '_' + tmp_key] = tmp_val
 
                 self.len_real = len(self.real_name_list)
@@ -138,7 +143,11 @@ class custom_dataset(Dataset):
                 mask_s = Image.open(img_name.format(self.cfg.mask_s_dir))
                 with open(img_name.format(self.cfg.txt_dir)[:-4] + '.txt', 'r') as f:
                     lines = f.readlines()
-                text = lines[0].strip().split()[-1]
+                try:
+                    text = lines[0].strip().split()[-1]
+                except IndexError:
+                    text = "x"
+                    print('failed data sample')
                 text = re.sub("[^0-9a-zA-Z]+", "", text).lower()
                 i_t = self.transform(i_t)
                 i_s = self.transform(i_s)
